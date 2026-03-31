@@ -25,7 +25,58 @@ Examples: `AS` (Ace of Spades), `TH` (Ten of Hearts), `2C` (Two of Clubs)
 
 ## Quick Start
 
-### Run locally
+### CLI
+
+```bash
+# Preflop: AA vs KK
+go run ./cmd/cli AS AH, KS KH
+
+# With board cards
+go run ./cmd/cli AS KS, QH QD --board KH,7C,2D
+
+# 4-way with custom simulations
+go run ./cmd/cli AS AH, KS KH, QS QH, JC TC --sims 50000
+
+# From a JSON file
+go run ./cmd/cli --json example.json
+
+# JSON output
+go run ./cmd/cli AS AH, KS KH --output-json
+```
+
+Output:
+
+```
+  Stage: Preflop | Simulations: 10000 | Duration: 1.67ms
+
+  Hand        Cards         Equity       Win       Tie
+  ----------  ----------  --------  --------  --------
+  Player 1    AS AH         82.15%    81.14%     1.01%
+  Player 2    KS KH         17.85%    16.84%     1.01%
+```
+
+**CLI Flags:**
+
+| Flag            | Description                                      |
+|-----------------|--------------------------------------------------|
+| `--board`       | Community cards, comma-separated (e.g. `KH,7C,2D`) |
+| `--dead`        | Dead/mucked cards, comma-separated               |
+| `--sims <n>`    | Number of simulations (default 10000, max 100000) |
+| `--json <file>` | Read input from a JSON file                      |
+| `--output-json` | Output results as JSON                           |
+| `--help`        | Show usage                                       |
+
+**JSON file format** (`example.json`):
+
+```json
+{
+  "hands": [["AS", "AH"], ["KS", "KH"]],
+  "board": ["2D", "7C", "JH"],
+  "simulations": 20000
+}
+```
+
+### HTTP Server
 
 ```bash
 go run ./cmd/server
@@ -33,7 +84,7 @@ go run ./cmd/server
 
 The server starts on port `8080` by default. Set the `PORT` environment variable to change it.
 
-### Run with Docker
+### Docker
 
 ```bash
 docker build -t poker-equity .
@@ -243,6 +294,8 @@ go test ./pkg/equity/ -v -run TestSpeedDiagnostics
 ```
 .
 ├── cmd/
+│   ├── cli/
+│   │   └── main.go          # CLI tool
 │   └── server/
 │       └── main.go          # HTTP server and API handlers
 ├── pkg/
@@ -255,6 +308,7 @@ go test ./pkg/equity/ -v -run TestSpeedDiagnostics
 │       └── equity_test.go    # Comprehensive test suite
 ├── .do/
 │   └── app.yaml             # Digital Ocean App Platform spec
+├── example.json              # Example JSON input for CLI
 ├── Dockerfile
 ├── go.mod
 └── README.md

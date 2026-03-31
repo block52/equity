@@ -1,0 +1,5 @@
+{
+  "hands": [["AS", "AH"], ["KS", "KH"]],
+  "board": ["2D", "7C", "JH"],
+  "simulations": 20000
+}
