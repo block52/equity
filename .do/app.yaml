@@ -1,0 +1,21 @@
+name: poker-equity
+region: nyc
+services:
+  - name: poker-equity
+    dockerfile_path: Dockerfile
+    github:
+      repo: block52/poker-equity
+      branch: main
+      deploy_on_push: true
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 30
+    envs:
+      - key: PORT
+        value: "8080"
